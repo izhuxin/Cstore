@@ -9,13 +9,11 @@
 #ifndef jgC_StoreDB_Constant_h
 #define jgC_StoreDB_Constant_h
 #include <stdio.h>
+
 #define JOIN_OPERATION_NAME "join"
 #define LOAD_DATA_OPERATION_NAME "load"
 #define QUERY_OPERATION_NAME "retrieve"
 #define COMPRESS_OPERATION_NAME "compress"
-#define ORDERKEY_SIZE 4;
-#define CUSTKEY_SIZE 4;
-#define TOTALPRICE_SIZE 8;
 #define ORDER_ENTIRE_ENTRY_MAXSIZE 11 + 11 + 2 + 12 + 11 + 16 + 16 + 11 + 79 //169
 #define O_ORDERKEY_CONDITION 0
 #define O_CUSTKEY_CONDITION 1
@@ -24,6 +22,14 @@
 #define NUMBER_OF_PAGE 128
 #define PAGE_SIZE 4 * 1024
 #define NUMBER_OF_PRORITY 4
+
+#define orderKeyFileName "orderKey.dat"
+#define custKeyFileName "custKey.dat"
+#define totalPriceFileName "totalPrice.dat"
+#define shipPriorityFileName "shipPriority.dat"
+#define sortedCustKeyFileName "sortedCustKey.dat"
+#define compressCustKeyFileName "compressedCustKey.dat"
+
 
 typedef enum SHIPPRIORITY {
     NONE = 0,
@@ -61,76 +67,5 @@ typedef union ORDERDATA {
     double O_TOTALPRICE;
     SHIPPRIORITY O_SHIPPRIORITY;
 }ORDERDATA;
-
-typedef struct entry {
-    ORDERDATA data;
-    struct entry *next;
-    entry() {
-        next = 0;
-    }
-}entry;
-
-typedef struct page {
-    char *data;
-    int offSet;
-    page(){
-        data = new char[PAGE_SIZE];
-        offSet = 0;
-    }
-    ~page() {
-        //delete []data;
-        data = 0;
-        offSet = 0;
-    }
-}page;
-
-typedef enum fileName {
-    __ORDER_KEY_FILE__,
-    __CUST_KEY_FILE__,
-    __TOTAL_PRICE_FILE__,
-    __SHIP_PRIORITY_FILE__,
-    __SORTED_CUST_KEY_FILE__
-}fileName;
-
-#define orderKeyFileName "orderKey.dat"
-#define custKeyFileName "custKey.dat"
-#define totalPriceFileName "totalPrice.dat"
-#define shipPriorityFileName "shipPriority.dat"
-#define sortedCustKeyFileName "sortedCustKey.dat"
-#define compressCustKeyFileName "compressedCustKey.dat"
-
-inline const char* fileNameMap( fileName _fileName ) {
-    switch( _fileName ) {
-        case __ORDER_KEY_FILE__:
-            return orderKeyFileName;
-        case __CUST_KEY_FILE__:
-            return custKeyFileName;
-        case __TOTAL_PRICE_FILE__:
-            return totalPriceFileName;
-        case __SHIP_PRIORITY_FILE__:
-            return shipPriorityFileName;
-        case __SORTED_CUST_KEY_FILE__:
-            return sortedCustKeyFileName;
-    }
-    return "";
-}
-
-typedef enum typeName {
-    __INT__,
-    __DOUBLE__,
-    __SHIPRORITY__
-}propertyTypeName;
-
-inline size_t sizeOfProperty(propertyTypeName type) {
-    switch ( type ) {
-        case __INT__:
-            return sizeof(int);
-        case __DOUBLE__:
-            return sizeof(double);
-        case __SHIPRORITY__:
-            return sizeof(SHIPPRIORITY);
-    }
-    return 0;
-}
 
 #endif

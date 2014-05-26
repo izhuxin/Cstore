@@ -3,6 +3,7 @@
 
 #include <cstring> //size_t memcpy
 #include <cstdio>
+#include "Page.h"
 
 #include "Constant.h"
 /**
@@ -10,55 +11,44 @@
  */
 class pagesManager {
 private:
-    page *pages;
-    int orderKeyIndex;
-    int custKeyIndex;
-    int totalPirceIndex;
-    int priorityIndex;
+    Page *pages;
     /**
      *  sigletron instance
      *  private constructor and destructor
      */
     static pagesManager *_instance;
-    int pageIndex;
     pagesManager();
     ~pagesManager();
     
-    /**
-     *  copy the entry content into pages[index] memory
-     *
-     *  @param index pages counter
-     *  @param entry the pointer to the content to be copied into page
-     *
-     *  @return the first non-full page index after insert,
-     *          return -1 for all pages have been used
-     */
-    int insertInPagesAtIndex( int index, const void* entry, size_t size );
-    bool writePagesToFile( int low, int high, fileName _fileName );
-    int searchInPageAtIndex( int index, int key, size_t size );
-    int searchInFile( int key, int pageIndex, fileName _fileName );
+    //helper function for qsort
     static int compare( const void *a, const void *b );
-    void quick_sort( char* data, propertyTypeName type, int begin, int end );
 
 public:
-    inline void clearPage() {
-        pageIndex = 0;
-    }
     static pagesManager *sharedManager();
-    void insertOrderKey( int orderKey );
-    void insertCustKey( int orderKey, int custKey );
-    void insertTotalPrice( int orderKey, double totalPrice );
-    void insertShipPriority( int orderKey, SHIPPRIORITY prioriy );
     
-    bool queryWithOrderKey( char* arrayOutput, int orderKey );
+    //operations on one page
+    //just simple to call functions in Page
+    void writePageAtIndexToFile( size_t index, FILE* fptr );
     
-    int writeAllPagesToFile();
+    void clearPageAtIndex( size_t index );
     
-    bool readFileToOnePage( FILE *&fptr );
-    bool readPropertyToPages( fileName _fileName, bool restart );
-    void sortAllPages( propertyTypeName type, int fileIndex );
-    void megrePagesToFile( FILE *fptr );
-    double compress();
+    void readFileToPageAtIndex( FILE *fptr, int index );
+    
+    bool searchKeyInPageAtIndex( const char* key, size_t keySize, char *entryOutput, size_t entrySize, int index );
+    
+    //operations on pages
+    bool insertData( char *data, size_t _size, size_t pageCondition );
+
+    int readFileToPages( FILE* fptr, int begin, int end );
+    
+    void clearPages( int begin, int end );
+    
+    //extern sort helper functions
+    void sortPages( int begin, int end );
+    
+    void megrePagesToFile( int begin, int end, FILE* tempFptr );
+    
+    void compressPagesToFile( FILE *fptr, int begin, int end );
 
 };
 

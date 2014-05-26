@@ -14,7 +14,7 @@ Page::Page() {
 }
 
 Page::~Page() {
-
+    
 }
 
 bool Page::insertDataToPage(char *data_, size_t size) {
@@ -24,7 +24,6 @@ bool Page::insertDataToPage(char *data_, size_t size) {
     } else {
         return false;
     }
-    
     return true;
 }
 
@@ -33,25 +32,57 @@ void Page::clearPage() {
 }
 
 void Page::writePageToFile( FILE *fptr ) {
-    fwrite(data, sizeof(char), PAGE_SIZE, fptr);
+    fwrite(data, sizeof(char), offSet, fptr);
 }
 
 void Page::readFileToPage( FILE *fptr ) {
-    fread(data, sizeof(char), PAGE_SIZE, fptr);
+    offSet = fread(data, sizeof(char), PAGE_SIZE, fptr);
 }
 
-bool Page::searchInPage( int key ) {
-    int currentKey = 0;
-    int currentOffset = offSet;
-    while( currentOffset < PAGE_SIZE )  {
-        memcpy( &currentKey, data+currentOffset, sizeof(int) );
-        if ( key != currentKey ) {
-            currentOffset += sizeof(int);
+bool Page::searchInPage( const char *key, size_t keySize, char* & outputEntry, size_t entrySize ) {
+    char *currentKey = new char[keySize];
+    
+    bool found = false;
+    int currentOffset = 0;
+    
+    while( currentOffset < offSet )  {
+        memcpy( currentKey, data + currentOffset, keySize );
+        if ( memcmp( key, currentKey, keySize ) != 0 ) {
+            currentOffset += entrySize;
         } else {
+            found = true;
+            memcpy( outputEntry, data + currentOffset, entrySize );
             break;
         }
     }
-    if ( key == currentKey ) return true;
-    else return false;
-
+    
+    free(currentKey);
+    return found;
 }
+
+void Page::compressToPage( Page *outputPage, int keySize, int entrySize, FILE *fptr ) {
+    char *currentEntry = new char[keySize];
+    memcpy( currentEntry, data + keySize, entrySize );
+    char *nextEntry = new char[entrySize];
+    int currentCount = 1;
+    for ( int i = 1; i < PAGE_SIZE / (entrySize+keySize); i++ ) {
+        memcpy( nextEntry, data + keySize + (entrySize+keySize) * i, entrySize );
+        if ( memcmp( currentEntry, nextEntry, entrySize ) == 0 ) {
+            currentCount++;
+        } else {
+            outputPage->insertDataToPage( currentEntry, entrySize );
+            outputPage->insertDataToPage( (char*)&currentCount, sizeof(int) );
+            
+            memcpy( currentEntry, nextEntry, entrySize );
+            currentCount = 1;
+            
+            if ( outputPage->isFull() ) {
+                outputPage->writePageToFile( fptr );
+                outputPage->clearPage();
+            }
+        }
+    }
+    delete []currentEntry;
+    delete []nextEntry;
+}
+

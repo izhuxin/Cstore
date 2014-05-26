@@ -15,7 +15,7 @@
 class Page {
 private:
     char data[PAGE_SIZE];
-    int offSet;
+    size_t offSet;
     
 public:
     Page();
@@ -54,16 +54,19 @@ public:
      *
      *  @return true for found, false for unfound
      */
-    bool searchInPage( void *key, size_t _size );
+    bool searchInPage( const char *key, size_t keySize, char* & outputEntry,  size_t entrySize );
     
+    void compressToPage( Page *outputPage, int keySize, int entrySize, FILE *fptr );
+    
+    inline bool isFull() { return offSet >= PAGE_SIZE; }
+    inline bool isEmpty() { return offSet <= 0; }
     /**
      *  getters and setters for the private member
      *
      */
-    char *getData();
-    
-    int getOffset();
-    void setOffset( int offset );
+    inline char *getData() { return data; }
+    inline size_t getOffset() { return offSet; }
+    inline void setOffset( int offset ) { offSet = offset; }
 };
 
 #endif /* defined(__jgC_StoreDB__Page__) */
