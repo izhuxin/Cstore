@@ -21,22 +21,26 @@ bool Page::insertDataToPage(char *data_, size_t size) {
     if ( size + offSet <= PAGE_SIZE ) {
         memcpy(data+offSet, data_, size);
         offSet += size;
+        return true;
     } else {
         return false;
     }
-    return true;
 }
 
 void Page::clearPage() {
+    memset( data, 0, PAGE_SIZE );
     offSet = 0;
 }
 
 void Page::writePageToFile( FILE *fptr ) {
-    fwrite(data, sizeof(char), offSet, fptr);
+    size_t count = fwrite( data, sizeof(char), offSet, fptr );
+    if ( count != offSet ) {
+        printf( "fwrite bug!" );
+    }
 }
 
 void Page::readFileToPage( FILE *fptr ) {
-    offSet = fread(data, sizeof(char), PAGE_SIZE, fptr);
+    offSet = fread( data, sizeof(char), PAGE_SIZE, fptr );
 }
 
 bool Page::searchInPage( const char *key, size_t keySize, char* & outputEntry, size_t entrySize ) {
@@ -66,7 +70,7 @@ void Page::compressToPage( Page *outputPage, int keySize, int entrySize, FILE *f
     char *nextEntry = new char[entrySize];
     int currentCount = 1;
     for ( int i = 1; i < PAGE_SIZE / (entrySize+keySize); i++ ) {
-        memcpy( nextEntry, data + keySize + (entrySize+keySize) * i, entrySize );
+        memcpy( nextEntry, data + keySize + ( entrySize+keySize) * i, entrySize );
         if ( memcmp( currentEntry, nextEntry, entrySize ) == 0 ) {
             currentCount++;
         } else {
@@ -86,3 +90,11 @@ void Page::compressToPage( Page *outputPage, int keySize, int entrySize, FILE *f
     delete []nextEntry;
 }
 
+bool Page::readPropertyWithOffSet( char *property, size_t proertySize, int _offSet ) {
+    if ( _offSet + (int)proertySize > offSet ) {
+        return false;
+    } else {
+        memcpy(property, data + _offSet, proertySize );
+        return true;
+    }
+}

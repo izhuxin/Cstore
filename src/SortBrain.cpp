@@ -17,11 +17,10 @@ SortBrain::~SortBrain() {
 }
 
 void SortBrain::externSort( const char *inputFileName, const char* outputFileName ) {
-        //read file to pages, and sort it to temp files
+        //read file to pages, and sort these pages and save to temp files
         int tempFileCount = pagesMemorySort( inputFileName );
         //megre these temp files to one file
         mergeSortTempFiles( tempFileCount, outputFileName );
-        _pageManager->clearPages( 0, NUMBER_OF_PAGE - 1 );
 }
 
 int SortBrain::pagesMemorySort( const char* inputFile ) {
@@ -37,7 +36,7 @@ int SortBrain::pagesMemorySort( const char* inputFile ) {
         
         //megre pages to temp file
         char fileName[15] = {};
-        sprintf(fileName, "temp%d.dat", count - 1 );
+        sprintf( fileName, "temp%d.dat", count - 1 );
         FILE *tempFptr = fopen( fileName, "wb" );
         _pageManager->megrePagesToFile( 0, readPagesCount - 1, tempFptr );
         fclose( tempFptr );
@@ -50,25 +49,28 @@ int SortBrain::pagesMemorySort( const char* inputFile ) {
     count++;
     _pageManager->sortPages( 0, readPagesCount - 1 );
     
+    //megre pages to temp file
     char fileName[15] = {};
     sprintf(fileName, "temp%d.dat", count - 1 );
     FILE *tempFptr = fopen( fileName, "wb" );
     _pageManager->megrePagesToFile( 0, readPagesCount - 1, tempFptr );
+   
+    //clear pages
     _pageManager->clearPages( 0, NUMBER_OF_PAGE - 1 );
-    fclose( tempFptr );
     
+    //close the file
+    fclose( tempFptr );
     fclose( inputFptr );
+
     return count;
 }
 
-void SortBrain::mergeSortTempFiles(int count, const char* outputFile) {
+void SortBrain::mergeSortTempFiles( int count, const char* outputFile ) {
     if ( count <= 0 )
         return;
-    
-    //file pointers
     FILE *outputFptr = fopen( outputFile, "wb" );
     
-    //create temp file
+    //open temp files
     FILE* *fileArray = new FILE *[count];
     for ( int i = 0 ; i < count; i++ ) {
         char fileName[15];
@@ -76,41 +78,19 @@ void SortBrain::mergeSortTempFiles(int count, const char* outputFile) {
         fileArray[i] = fopen( fileName, "rb" );
     }
     
-    //helper variables
-    bool *fileHaveRead = new bool[count];
-    memset( fileHaveRead, false, count );
-    int readCount = 0;
-    
-    while ( readCount < count ) {   //while not all files are at the end of file
-        int pageIndex = 0;
-        for ( int i = 0 ; i < count; i++ ) {    //read a page of data from file
-            if ( fileHaveRead[i] )
-                continue;
-            
-            _pageManager->readFileToPageAtIndex( fileArray[i], pageIndex );
-            pageIndex++;
-            if ( feof(fileArray[i]) ) { //if file[i] have been read
-                fileHaveRead[i] = true; //mark it
-                fclose( fileArray[i] );   //close temp file
-                readCount++;
-            }
-            
-        }
-        
-        //megre pages to file
-        _pageManager->megrePagesToFile( 0, pageIndex, outputFptr );
-    }
+    _pageManager->megreFilesToFile( fileArray, count, outputFptr );
     
     //close file
     fclose( outputFptr );
     
     //remove temp files
     for ( int i = 0 ; i < count; i++ ) {
+        fclose( fileArray[i] );
+
         char fileName[15];
         sprintf( fileName, "temp%d.dat", i );
         remove( fileName );
     }
-
+    
     delete [] fileArray;
-    //_pageManager->test();
 }

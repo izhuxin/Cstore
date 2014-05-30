@@ -6,6 +6,12 @@
 //  Copyright (c) 2014年 Jeason. All rights reserved.
 //
 
+/**
+ *  Page definition.
+ *  The system is bulit based on this struct.
+ *  All operations needed is define this struct.
+ *  Do not change the function impletement until you are certainly know what you are doing.
+ */
 #ifndef __jgC_StoreDB__Page__
 #define __jgC_StoreDB__Page__
 
@@ -57,6 +63,8 @@ public:
     bool searchInPage( const char *key, size_t keySize, char* & outputEntry,  size_t entrySize );
     
     void compressToPage( Page *outputPage, int keySize, int entrySize, FILE *fptr );
+    
+    bool readPropertyWithOffSet( char *property, size_t proertySize, int _offSet );
     
     inline bool isFull() { return offSet >= PAGE_SIZE; }
     inline bool isEmpty() { return offSet <= 0; }

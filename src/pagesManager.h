@@ -36,6 +36,8 @@ public:
     
     bool searchKeyInPageAtIndex( const char* key, size_t keySize, char *entryOutput, size_t entrySize, int index );
     
+    bool readPropertyFromPageAtIndexWithOffSet( char *property, size_t propertySize, int offset, int pageIndex );
+    
     //operations on pages
     bool insertData( char *data, size_t _size, size_t pageCondition );
 
@@ -47,6 +49,8 @@ public:
     void sortPages( int begin, int end );
     
     void megrePagesToFile( int begin, int end, FILE* tempFptr );
+    
+    void megreFilesToFile( FILE **tempFileArray, int tempFileCount, FILE *outputFptr );
     
     void compressPagesToFile( FILE *fptr, int begin, int end );
 
