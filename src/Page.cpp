@@ -35,7 +35,7 @@ void Page::clearPage() {
 }
 
 void Page::writePageToFile( FILE *fptr ) {
-    size_t count = fwrite( data, sizeof(char), offSet, fptr );
+    offSet = fwrite( data, sizeof(char), offSet, fptr );
 }
 
 void Page::readFileToPage( FILE *fptr ) {
