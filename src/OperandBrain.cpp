@@ -126,12 +126,6 @@ void OperandBrain::loadData( const char* _fileName ) {
             fclose( totalPriceFptr );
             fclose( shipPriorityFptr );
 
-            custKeyFptr = fopen( custKeyFileName, "rb" );
-            while ( !feof( custKeyFptr ) ) {
-                _pageManager->readFileToPageAtIndex( custKeyFptr, 0 );
-                _pageManager->printPageAtIndex( 0, "testLoadCustkey.txt" );
-            }
-            
             //delete temp variable
             delete [] tempArr;
             

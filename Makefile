@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-c -g -Wall
 LDFLAGS=
-SOURCES=src/main.cpp src/dataManager.cpp src/pagesManager.cpp src/FileManager.cpp src/System.cpp
+SOURCES=src/main.cpp src/Page.cpp src/pagesManager.cpp src/OperandBrain.cpp src/SortBrain.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=bin/db
 

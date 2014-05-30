@@ -8,6 +8,8 @@
 
 #include "Page.h"
 #include "Constant.h"
+#include <cstring>
+#include <cstdio>
 
 Page::Page() {
     offSet = 0;
@@ -34,9 +36,6 @@ void Page::clearPage() {
 
 void Page::writePageToFile( FILE *fptr ) {
     size_t count = fwrite( data, sizeof(char), offSet, fptr );
-    if ( count != offSet ) {
-        printf( "fwrite bug!" );
-    }
 }
 
 void Page::readFileToPage( FILE *fptr ) {
@@ -60,7 +59,7 @@ bool Page::searchInPage( const char *key, size_t keySize, char* & outputEntry, s
         }
     }
     
-    free(currentKey);
+    delete []currentKey;
     return found;
 }
 
