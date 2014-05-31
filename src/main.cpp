@@ -18,6 +18,9 @@ int main(int argc, const char * argv[])
             if ( strcmp( argv[1], JOIN_OPERATION_NAME) == 0 ) {
                 //db join
                 _operandBrain.join();
+            } else if ( strcmp( argv[1], COUNT_OPERATION_NAME ) == 0 ) {
+                //db count
+                printf( "Count: %ld\n", _operandBrain.count() );
             }
             break;
             

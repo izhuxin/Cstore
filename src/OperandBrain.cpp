@@ -48,6 +48,7 @@ void OperandBrain::loadData( const char* _fileName ) {
             FILE *custKeyFptr = fopen( "custKey.dat", "wb" );
             FILE *totalPriceFptr = fopen( "totalPrice.dat", "wb" );
             FILE *shipPriorityFptr = fopen( "shipPriority.dat", "wb" );
+
             while ( !feof( fptr ) ) {
                 //read one line of file to memory
                 fgets( strLine, ENTIRE_ENTRY_MAXSIZE, fptr );
@@ -195,6 +196,10 @@ void OperandBrain::queryInTable( const char *tableName ) {
             
             //open files
             FILE *orderKeyFptr = fopen( orderKeyFileName, "rb" );
+            if ( orderKeyFptr == NULL ) {
+                printf( "%s can not be open!Do you forget to load relative data?",orderKeyFileName );
+                return;
+            }
             FILE *custKeyFptr = fopen( custKeyFileName, "rb" );
             FILE *totalPriceFptr = fopen( totalPriceFileName, "rb" );
             FILE *shipPriorityFptr = fopen( shipPriorityFileName, "rb");
@@ -247,7 +252,7 @@ void OperandBrain::queryInTable( const char *tableName ) {
                     }
                 }
                 //print the result
-                printf( "%-4d|%.2f|%s\n",custKey, totalPrice, priorityNameMap(priority) );
+                printf( "|%-10d|%-10d|%.2f|%s|\n",orderKey,custKey, totalPrice, priorityNameMap(priority) );
 
             } else {    //can not find orderKey, the query fail
                 printf( "%d is not found!\n", orderKey );
@@ -282,7 +287,6 @@ void OperandBrain::compressData( const char *tableName, const char* column ) {
     start_time = time(NULL);
     printf("Start externSort %s table column%s...\n", tableName, column);
     printf("It may take you serveral seconds, please wait...\n");
-    printf("%s table column%s has been sorted, start to compress...\n", tableName, column);
     //double rate = _pageManager->compress();
     double rate = 0.0;
     if ( strcmp( tableName, "orders" ) == 0 ) {
@@ -291,7 +295,8 @@ void OperandBrain::compressData( const char *tableName, const char* column ) {
             
             //extern sort
             _sortBrain->externSort( custKeyFileName, sortedCustKeyFileName );
-            
+            printf("%s table column%s has been sorted, start to compress...\n", tableName, column);
+
             //begin to compress
             //open files
             FILE *sortedFptr = fopen( sortedCustKeyFileName, "rb" );
@@ -370,7 +375,10 @@ void OperandBrain::join() {
     FILE *cCustKeyFptr = fopen( C_CustKeyFileName, "rb" );
     FILE *oCustKeyFptr = fopen( sortedCustKeyFileName, "rb" );
     FILE *compressFptr = fopen( compressCustKeyFileName, "rb" );
-
+    if ( oCustKeyFptr == NULL || cCustKeyFptr == NULL || compressFptr == NULL ) {
+        printf( "File can not be oepned!Do you forget to load data and compress it?" );
+        return;
+    }
     //read first pages
     _pageManager->readFileToPageAtIndex( cCustKeyFptr, 0 );
     _pageManager->readFileToPageAtIndex( compressFptr, 1 );
@@ -384,7 +392,6 @@ void OperandBrain::join() {
     
     int offSets[3] = { 0 };
     bool end = false;
-    int count = 0;
     printf( "-----------------------\n" );
     printf( "|CustKey   |OrderKey  |\n" );
     printf( "-----------------------\n" );
@@ -447,18 +454,18 @@ void OperandBrain::join() {
             }
             offSets[2] += sizeof(int) * 2;
             printf( "|%-10d|%-10d|\n",o_custKey, orderKey );
-            count++;
         }
     }
-    printf( "-----------------------\n" );
-    printf( "count: %d\n",count );
-    
+    printf( "-----------------------\n" );    
     
 }
 long OperandBrain::count() {
     
     FILE *compressedFptr = fopen( compressCustKeyFileName, "rb" );
-    
+    if ( compressedFptr == NULL ) {
+        printf( "%s can not be open!Do you forget to compress it before count?\n",compressCustKeyFileName );
+        return 0;
+    }
     //helper variables
     long result = 0;    //length sum
     int length; //current length

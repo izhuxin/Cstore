@@ -11,6 +11,7 @@
 
 /* Operation name definition */
 #define JOIN_OPERATION_NAME "join"
+#define COUNT_OPERATION_NAME "count"
 #define LOAD_DATA_OPERATION_NAME "load"
 #define QUERY_OPERATION_NAME "retrieve"
 #define COMPRESS_OPERATION_NAME "compress"

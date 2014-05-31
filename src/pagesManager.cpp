@@ -101,8 +101,8 @@ void pagesManager::megrePagesToFile( int begin, int end, FILE* tempFptr ) {
     
     //keep track of pages
     int *offsets = new int[end - begin + 1];
-    memset( offsets, 0, end - begin + 1 );
-    
+    memset( offsets, 0, ( end - begin + 1 ) * 4 );
+
     while ( true ) {       //when the pages have not been read
         int min = -1;    //find the minimize of the first entry of pages
         bool first = true;
@@ -161,7 +161,7 @@ void pagesManager::megreFilesToFile( FILE **tempFileArray, int tempFileCount, FI
     int readCount = 0;  //count the number of files have been read
     
     int *offsets = new int[tempFileCount];  //keep track of pages
-    memset( offsets, 0, tempFileCount );
+    memset( offsets, 0, tempFileCount * 4 );
 
     bool *fileHaveRead = new bool[tempFileCount];
     memset( fileHaveRead, false, tempFileCount );

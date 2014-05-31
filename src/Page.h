@@ -21,7 +21,7 @@
 class Page {
 private:
     char data[PAGE_SIZE];
-    size_t offSet;
+    int offSet;
     
 public:
     Page();
@@ -73,7 +73,7 @@ public:
      *
      */
     inline char *getData() { return data; }
-    inline size_t getOffset() { return offSet; }
+    inline int getOffset() { return offSet; }
     inline void setOffset( int offset ) { offSet = offset; }
 };
 
