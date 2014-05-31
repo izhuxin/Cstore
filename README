@@ -1,6 +1,6 @@
 			     C-Store Database System
-				 Version 0.1.3
-		                   05/07/2014
+				 Version 0.3.0
+		                   05/31/2014
 
 	     Copyright (c) 2014 - 2014. All rights reserved
 
@@ -11,6 +11,8 @@ Table of Contents
 * Load data to system
 * Retrieve data in system
 * Compress data
+* Join
+* Count
 * TODO
 
 Compile&Link
@@ -41,8 +43,21 @@ Compress data
 
     After you have load data to the system, you can compress it. Run "./db compress " will start extern sort the data in the system and compress them, it may takes a few time to sort and compress a large amount of data. When it has done, compress rate will be return and log to screen.
 
+Join
+=====
+
+    After you have compressed orders table and load customer, you can join two tables. Run “./db join” will join orders table and customer table and print the custkey and orderkey in the terminal.
+
+Count
+======
+    After you have compressed orders table, you can count the lines number of the orders table quickly. Run “./db count” will count the lines and log to the screen.
+
 TODO
 ====
    
-   * Complete join operation.
-   * A long way to left...
+   * Clear the switch code in the load data operation to get a general method to load 
+     other tables to the system.
+
+   * Implement an algorithm to sort general page with comparable entries
+   
+   * Join general two tables in the system

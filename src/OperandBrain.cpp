@@ -307,15 +307,19 @@ void OperandBrain::compressData( const char *tableName, const char* column ) {
             int offset = sizeof(int);
             int count = 1;
             
+            //read first page from sorted file
             _pageManager->readFileToPageAtIndex( sortedFptr, 0 );
+            //read first custKey from page
             _pageManager->readPropertyFromPageAtIndexWithOffSet( (char*)&currentCustKey, sizeof(int), offset, 0 );
             offset += 8;
-            bool pageHaveRead = false;
+            
+            bool end = false;
+            
             while ( true ) {     //while soted file have not been read
                 //read a custKey from page
                 while ( !_pageManager->readPropertyFromPageAtIndexWithOffSet( (char*)&nextCustKey, sizeof(int), offset, 0 ) ) {
                     if ( feof( sortedFptr ) ) {     //if is end of file and page have reed
-                        pageHaveRead = true;        //mark end
+                        end = true;        //mark end
                         break;
                     } else {
                         _pageManager->readFileToPageAtIndex( sortedFptr, 0 );   //else, read a new page
@@ -324,7 +328,7 @@ void OperandBrain::compressData( const char *tableName, const char* column ) {
                 }
                 offset += 8;                    //offset point to next entry
                 
-                if ( pageHaveRead ) break;      //if end, break while loop
+                if ( end ) break;      //if end, break while loop
                 
                 //if two custKey is same
                 if ( currentCustKey == nextCustKey ) {
@@ -371,6 +375,9 @@ void OperandBrain::compressData( const char *tableName, const char* column ) {
 }
 
 void OperandBrain::join() {
+    time_t start_time, end_time;
+    start_time = time(NULL);
+
     //file pointers
     FILE *cCustKeyFptr = fopen( C_CustKeyFileName, "rb" );
     FILE *oCustKeyFptr = fopen( sortedCustKeyFileName, "rb" );
@@ -395,7 +402,7 @@ void OperandBrain::join() {
     printf( "-----------------------\n" );
     printf( "|CustKey   |OrderKey  |\n" );
     printf( "-----------------------\n" );
-
+    
     while ( true ) {
         //read a custKey from compressed page
         while ( !_pageManager->readPropertyFromPageAtIndexWithOffSet( (char*)&o_custKey, sizeof(int), offSets[1], 1 )
@@ -457,7 +464,13 @@ void OperandBrain::join() {
         }
     }
     printf( "-----------------------\n" );    
-    
+    end_time = time(NULL);
+    unsigned long long dur = end_time - start_time;
+    int sec = dur % 60;
+    int min = ( ( dur - sec ) / 60 ) % 60;
+    int hour = (int)( dur - sec - min * 60 ) /  3600;
+    printf( "Join done!\nIt takes %dhours and %dminiutes and %dseconds\n", hour, min,sec );
+
 }
 long OperandBrain::count() {
     

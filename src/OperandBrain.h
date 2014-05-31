@@ -12,7 +12,10 @@
 #include "SortBrain.h"
 class OperandBrain {
 private:
+    //memory management
     pagesManager *_pageManager;
+    
+    //extern sort helper
     SortBrain *_sortBrain;
     
 public:
@@ -20,6 +23,7 @@ public:
     
     ~OperandBrain();
     
+    /* operands the system support */
     void queryInTable( const char *tableName );
     
     void loadData( const char *_fileName );

@@ -10,7 +10,8 @@
  *  Page definition.
  *  The system is bulit based on this struct.
  *  All operations needed is define this struct.
- *  Do not change the function impletement until you are certainly know what you are doing.
+ *  Do not change the function impletement until you are certainly know what
+ *  you are doing.
  */
 #ifndef __jgC_StoreDB__Page__
 #define __jgC_StoreDB__Page__
@@ -21,7 +22,7 @@
 class Page {
 private:
     char data[PAGE_SIZE];
-    int offSet;
+    int offSet; //pointer to the current used data
     
 public:
     Page();
@@ -46,7 +47,7 @@ public:
     /**
      *  write and read content between file and page
      *
-     *  @param fptr the file pointer
+     *  @param fptr the file pointer to write or read
      */
     void writePageToFile( FILE *fptr );
     void readFileToPage( FILE *fptr );

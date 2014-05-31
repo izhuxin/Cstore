@@ -14,7 +14,20 @@
 class SortBrain {
 private:
     pagesManager *_pageManager;
+    /**
+     *  sort pages into temp files
+     *
+     *  @param inputFile file needed to be sortd
+     *
+     *  @return temp file count
+     */
     int pagesMemorySort( const char* inputFile );
+    /**
+     *  megre temp files to a file
+     *
+     *  @param count      the number of the temp files
+     *  @param outputFile the final sorted file
+     */
     void mergeSortTempFiles( int count, const char* outputFile );
 
 public:
