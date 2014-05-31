@@ -161,7 +161,7 @@ void pagesManager::megreFilesToFile( FILE **tempFileArray, int tempFileCount, FI
     int readCount = 0;  //count the number of files have been read
     
     int *offsets = new int[tempFileCount];  //keep track of pages
-    memset( offsets, 0, tempFileCount * 4 );
+    memset( offsets, 0, tempFileCount * sizeof(int) );
 
     bool *fileHaveRead = new bool[tempFileCount];
     memset( fileHaveRead, false, tempFileCount );

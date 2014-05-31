@@ -304,7 +304,7 @@ void OperandBrain::compressData( const char *tableName, const char* column ) {
             
             int currentCustKey;
             int nextCustKey;
-            int offset = 4;
+            int offset = sizeof(int);
             int count = 1;
             
             _pageManager->readFileToPageAtIndex( sortedFptr, 0 );

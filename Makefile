@@ -1,17 +1,29 @@
 CC=g++
 CFLAGS=-c -g -Wall
-LDFLAGS=
-SOURCES=src/main.cpp src/Page.cpp src/pagesManager.cpp src/OperandBrain.cpp src/SortBrain.cpp
-OBJECTS=$(SOURCES:.cpp=.o)
+SOURCE_DIR= ./src
+SOURCES=src/main.cpp \
+        src/OperandBrain.cpp \
+        src/pagesManager.cpp \
+        src/Page.cpp \
+        src/SortBrain.cpp
+
+OBJECTS_DIR=./bin
+OBJECTS=$(OBJECTS_DIR)/main.o \
+        $(OBJECTS_DIR)/OperandBrain.o \
+        $(OBJECTS_DIR)/Page.o \
+        $(OBJECTS_DIR)/pagesManager.o \
+        $(OBJECTS_DIR)/SortBrain.o
+
 EXECUTABLE=bin/db
 
-all: $(SOURCES) $(EXECUTABLE) clean
+all: $(OBJECTS_DIR_CREATE) $(EXECUTABLE)
+
+$(OBJECTS_DIR_CREATE):
+	mkdir bin
 	
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+	$(CC) -o $@ $(OBJECTS)
 
-.cpp.o:
-	$(CC) $(CFLAGS) $< -o $@
+$(OBJECTS_DIR)/%.o: $(SOURCE_DIR)/%.cpp
+	$(CC) $(CFLAGS) -o $@ $<
 
-clean:
-	rm -f $(OBJECTS) *.o
