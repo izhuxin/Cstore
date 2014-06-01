@@ -1,8 +1,5 @@
-			     C-Store Database System
-				 Version 0.3.0
-		                   05/31/2014
+#			     C-Store Database System
 
-	     Copyright (c) 2014 - 2014. All rights reserved
 
 Table of Contents		
 ==================
@@ -17,20 +14,20 @@ Table of Contents
 
 Compile&Link
 ============
-  
-   To get the executable of C-Store Database System application, you just need to startup terminal and CD to this folder and run 'make' command. This will compile the source files in /src and link the object to leave the executable to /bin. 
+
+    To get the executable of C-Store Database System application, you just need to startup terminal and CD to this folder and run 'make' command. This will compile the source files in /src and link the object to leave the executable to /bin. 
   
 
 Load data to system
 ===================
 
-   In this version, you should copy the data file(orders.tbl, e.g.) to this folder and startup a terminal and CD to /bin and run "./db load <datafile>"( ./db load orders, e.g. ) command. This will load the data into the system.
+    In this version, you should copy the data file(orders.tbl, e.g.) to this folder and startup a terminal and CD to /bin and run "./db load <datafile>"( ./db load orders, e.g. ) command. This will load the data into the system.
 
 
 Retrieve data in system
 =======================
 
-   After you have load data to the system, you can query the tuples in the system with corresponding primary keys. Run "./db retrieve <tablename>" will start the retrieve mode of the system. And you can insert several primary keys to get the tuple. For example, you can run follow command in terminal to retrieve orders table with order_key:
+    After you have load data to the system, you can query the tuples in the system with corresponding primary keys. Run "./db retrieve <tablename>" will start the retrieve mode of the system. And you can insert several primary keys to get the tuple. For example, you can run follow command in terminal to retrieve orders table with order_key:
 ~$ ./db retrieve orders
 1
 2
@@ -50,10 +47,12 @@ Join
 
 Count
 ======
+
     After you have compressed orders table, you can count the lines number of the orders table quickly. Run “./db count” will count the lines and log to the screen.
 
 TODO
 ====
+
    
    * Clear the switch code in the load data operation to get a general method to load 
      other tables to the system.
@@ -61,3 +60,6 @@ TODO
    * Implement an algorithm to sort general page with comparable entries
    
    * Join general two tables in the system
+
+	     Copyright (c) 2014 - 2014. All rights reserved
+
