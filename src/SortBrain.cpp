@@ -77,7 +77,7 @@ void SortBrain::mergeSortTempFiles( int count, const char* outputFile ) {
         sprintf( fileName, "temp%d.dat", i );
         fileArray[i] = fopen( fileName, "rb" );
     }
-
+    
     _pageManager->megreFilesToFile( fileArray, count, outputFptr );
     
     //close file

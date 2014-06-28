@@ -6,7 +6,6 @@
 //  Copyright (c) 2014年 Jeason. All rights reserved.
 //
 
-
 #include "OperandBrain.h"
 
 int main(int argc, const char * argv[])
@@ -45,5 +44,6 @@ int main(int argc, const char * argv[])
             break;
             //crash the application for bad input
     }
+    
     return 0;
 }

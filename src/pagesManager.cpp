@@ -72,26 +72,12 @@ void pagesManager::clearPages( int begin, int end ) {
     }
 }
 
-void pagesManager::compressPagesToFile( FILE *fptr, int begin, int end ) {
-    Page *lastPage = &pages[ end + 1 ];     //output page
-    for ( int i = begin; i <= end; i++ ) {
-        //compress pages one by one
-        pages[i].compressToPage( lastPage, sizeof(int), sizeof(int), fptr );
-    }
-    //write remain output page
-    if ( !lastPage->isEmpty() ) {
-        lastPage->writePageToFile( fptr );
-        lastPage->clearPage();
-    }
-}
-
 #pragma mark -
 #pragma mark -extern sort helper functions
 void pagesManager::sortPages( int begin, int end ) {
     for ( int i = begin; i <= end; i++ ) {
-        // TODO: Implete a algorithm to sort general page with comparable entries
-        int entrySize = sizeof(int) + sizeof(int);
-        qsort( pages[i].getData(), pages[i].getOffset() / entrySize, entrySize, compare );
+        // TODO: Implement a algorithm to sort general page with comparable entries
+        qsort( pages[i].getData(), pages[i].getOffset() / 8, 8, compare );
     }
 }
 
@@ -102,13 +88,14 @@ void pagesManager::megrePagesToFile( int begin, int end, FILE* tempFptr ) {
     
     //keep track of pages
     int *offsets = new int[end - begin + 1];
-    memset( offsets, 0, ( end - begin + 1 ) * sizeof(int) );
+    memset( offsets, 0, ( end - begin + 1 ) * 4 );
 
     while ( true ) {       //when the pages have not been read
         int min = -1;    //find the minimize of the first entry of pages
         bool first = true;
         
         for ( int i = begin ; i <= end; i++ ) {
+            //printPage( pages[i].getData() );
             if ( offsets[ i - begin ] < pages[i].getOffset() ) {   //if this page is not been read at end
 
                 if ( first ) {                  //init the min
@@ -121,13 +108,13 @@ void pagesManager::megrePagesToFile( int begin, int end, FILE* tempFptr ) {
             }
         }   //for loop end, min save the value of the pageIndex of min
 
-        while ( !lastPage->insertDataToPage( pages[min].getData() + offsets[min-begin], sizeof(int)+sizeof(int) ) ) {  //insert the min value to the output page
+        while ( !lastPage->insertDataToPage( pages[min].getData() + offsets[min-begin], 8 ) ) {  //insert the min value to the output page
             //if insert fail
             //write page to file
             lastPage->writePageToFile( tempFptr );
             lastPage->clearPage();
         }
-        offsets[ min - begin ] += sizeof(int)+sizeof(int);    //next entry
+        offsets[ min - begin ] += 8;    //next entry
         
         //exam if all pages has been read
         int i;
@@ -167,7 +154,6 @@ void pagesManager::megreFilesToFile( FILE **tempFileArray, int tempFileCount, FI
     memset( fileHaveRead, false, tempFileCount );
     
     int min = -1;
-    int entrySize = sizeof(int) + sizeof(int);
     while ( readCount < tempFileCount ) {
         /* megre pages */
         //find the minimize of the pages
@@ -191,11 +177,11 @@ void pagesManager::megreFilesToFile( FILE **tempFileArray, int tempFileCount, FI
         }
         
         //isert the minimize to output page
-        while ( !outputPage->insertDataToPage( pages[min].getData() + offsets[min], entrySize ) ) {
+        while ( !outputPage->insertDataToPage( pages[min].getData() + offsets[min], 8 ) ) {
             outputPage->writePageToFile( outputFptr );
             outputPage->clearPage();
         }
-        offsets[min] += entrySize;
+        offsets[min] += 8;
         
         //if pages[min] have been read
         if ( offsets[min] >= pages[min].getOffset() ) {
@@ -211,11 +197,11 @@ void pagesManager::megreFilesToFile( FILE **tempFileArray, int tempFileCount, FI
     //write remain pages
     for ( int i = 0; i < tempFileCount; i++ ) {
         while ( offsets[i] < pages[i].getOffset() ) {
-            while ( !outputPage->insertDataToPage( pages[i].getData() + offsets[i], entrySize ) ) {
+            while ( !outputPage->insertDataToPage( pages[i].getData() + offsets[i], 8 ) ) {
                 outputPage->writePageToFile( outputFptr );
                 outputPage->clearPage();
             }
-            offsets[i] += entrySize;
+            offsets[i] += 8;
 
         }
     }
@@ -230,8 +216,8 @@ void pagesManager::megreFilesToFile( FILE **tempFileArray, int tempFileCount, FI
 
 int pagesManager::compare(const void * a, const void * b)
 {
-    a = (char*)a + sizeof(int);
-    b = (char*)b + sizeof(int);
+    a = (char*)a + 4;
+    b = (char*)b + 4;
     int entryA = *(int*)a;
     int entryB = *(int*)b;
     return ( entryA - entryB );

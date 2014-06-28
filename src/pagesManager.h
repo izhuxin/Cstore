@@ -52,8 +52,6 @@ public:
     
     void megreFilesToFile( FILE **tempFileArray, int tempFileCount, FILE *outputFptr );
     
-    void compressPagesToFile( FILE *fptr, int begin, int end );
-
 };
 
 #endif /* defined(__jgC_StoreDB__pagesManager__) */
